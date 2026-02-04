@@ -23,10 +23,22 @@
         /* 錶本體（放大但不使用 transform） */
         .clock-container {
             position: relative;
-            width: min(360vw, 2800px);
-            aspect-ratio: 2482 / 3508;
+    width: min(180vw, 1400px);
+    aspect-ratio: 2482 / 3508;
             
         }
+
+        @media (orientation: portrait) {
+    .clock-container {
+        width: min(360vw, 2800px);
+    }
+}
+
+@media (orientation: landscape) {
+    .clock-container {
+        width: min(180vw, 1400px);
+    }
+}
 
         .layer {
             position: absolute;
@@ -85,6 +97,7 @@
 
 </body>
 </html>
+
 
 
 
