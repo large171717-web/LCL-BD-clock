@@ -3,53 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <title>LCL Precision Watch - Feb 5 Edition</title>
+
     <style>
         body {
+            margin: 0;
             background-color: #e0e2e5;
+        }
+
+        /* 裁切舞台 */
+        .stage {
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
             overflow: hidden;
         }
 
+        /* 錶本體（放大但不使用 transform） */
         .clock-container {
             position: relative;
-            /* 你可以修改這個寬度，時鐘會等比例縮放 */
-            width: min(98vw, 720px); 
-            /* 根據你提供的 2482x3508 比例設定 */
+            width: min(110vw, 820px);
             aspect-ratio: 2482 / 3508;
         }
 
         .layer {
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
-            /* 關鍵：使用 contain 確保高解析圖片完整呈現且不失真 */
             object-fit: contain;
             pointer-events: none;
-            /* 軸心設定：根據你提供的 mm 數據換算：
-               y: 149.013mm / 297mm (A4總高) ≈ 50.173%
-            */
-            
         }
 
-        /* 移除底圖的旋轉效果 */
+        /* 錶面不旋轉 */
         .face {
             transform: none !important;
         }
+
+        /* 指針：中心旋轉（已修正） */
+        #hour,
+        #minute,
+        #second {
+            transform-origin: 50% 50%;
+        }
     </style>
 </head>
+
 <body>
 
-    <div class="clock-container">
-        <img src="face-01.png" class="layer face">
-        <img src="hour-01.png" id="hour" class="layer">
-        <img src="minute-01.png" id="minute" class="layer">
-        <img src="second-01.png" id="second" class="layer">
+    <div class="stage">
+        <div class="clock-container">
+            <img src="face-01.png" class="layer face">
+            <img src="hour-01.png" id="hour" class="layer">
+            <img src="minute-01.png" id="minute" class="layer">
+            <img src="second-01.png" id="second" class="layer">
+        </div>
     </div>
 
     <script>
@@ -60,23 +69,18 @@
             const m = now.getMinutes();
             const h = now.getHours();
 
-            // 平滑旋轉計算 (讓秒針像機械錶一樣滑動)
-            const sDeg = (s * 6) + (ms * 0.006);
-            const mDeg = (m * 6) + (s * 0.1);
-            const hDeg = (h % 12 * 30) + (m * 0.5);
+            const sDeg = s * 6 + ms * 0.006;
+            const mDeg = m * 6 + s * 0.1;
+            const hDeg = (h % 12) * 30 + m * 0.5;
 
-            document.getElementById('second').style.transform = `rotate(${sDeg}deg)`;
-            document.getElementById('minute').style.transform = `rotate(${mDeg}deg)`;
-            document.getElementById('hour').style.transform = `rotate(${hDeg}deg)`;
+            second.style.transform = `rotate(${sDeg}deg)`;
+            minute.style.transform = `rotate(${mDeg}deg)`;
+            hour.style.transform = `rotate(${hDeg}deg)`;
         }
 
-        // 提高更新頻率，讓動態更順暢
         setInterval(updateClock, 50);
         updateClock();
     </script>
+
 </body>
-
 </html>
-
-
-
